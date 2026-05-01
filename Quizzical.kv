@@ -1,8 +1,114 @@
 #:kivy 2.1.0
-<Base>:
+<AnswerButton>:
+    text: "0"
+    font_size: 24
+    size_hint: (0.8, 0.15)
+    pos_hint: {"center_x": 0.5}
+
+<RootManager>:
+    StartScreen:
+        name: "start"
+    QuizSelectScreen:
+        name: "quiz_select"
+    BasicNumbersScreen:
+        name: "basic_numbers"
+
+<StartScreen>:
     canvas.before:
         Color:
             rgba: 1, 0.9, 0.9, 1
         Rectangle:
             pos: self.pos
             size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            text: "Welcome to Quizzical!"
+            font_size: 32
+            color: 0.5, 0.2, 0.8, 1
+
+        Button:
+            text: "Start Quiz"
+            font_size: 24
+            size_hint: (0.5, 0.2)
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "quiz_select"
+
+
+<QuizSelectScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.9, 1, 0.9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            text: "Select Quiz"
+            font_size: 32
+            color: 0.2, 0.5, 0.2, 1
+
+        Button:
+            text: "Basic Numbers Quiz"
+            font_size: 24
+            size_hint: (0.8, 0.15)
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "basic_numbers"
+
+<GenericQuizScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.95, 0.95, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    AnchorLayout:
+        anchor_x: "left"
+        anchor_y: "top"
+        padding: [12, 12, 12, 12]
+
+        Label:
+            text: root.clock_text
+            font_size: 22
+            bold: True
+            color: 0.1, 0.1, 0.1, 1
+            size_hint: None, None
+            size: self.texture_size
+
+<BasicNumbersScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 56, 20, 20]
+        spacing: 20
+
+        Label:
+            text: "Basic Numbers Quiz"
+            font_size: 32
+            color: 0.1, 0.2, 0.5, 1
+
+        AnswerButton:
+            id: answer_btn_1
+
+        AnswerButton:
+            id: answer_btn_2
+
+        AnswerButton:
+            id: answer_btn_3
+
+        AnswerButton:
+            id: answer_btn_4
+
+        AnswerButton:
+            id: answer_btn_5
+
+            
