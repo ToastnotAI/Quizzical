@@ -23,16 +23,24 @@ class QuizSelectScreen(Screen):
         super().__init__(**kwargs)
         self.quiz_options = [
             {"text": "Basic Numbers Quiz", "screen": "basic_numbers"},
+            {"text": "Basic Alphabet Quiz", "screen": "basic_alphabet"},
             # Add more quiz options here as needed
         ]
         self.btns = []
+
+    def on_kv_post(self, *args):
         self.create_quiz_buttons()
     
     def create_quiz_buttons(self):
+        if "quiz_button_container" not in self.ids:
+            return
+
+        self.ids.quiz_button_container.clear_widgets()
+        self.btns = []
         for option in self.quiz_options:
             btn = QuizSelectButton(text=option["text"])
             btn.bind(on_release=lambda btn, option=option: self.select_quiz(option))
-            self.add_widget(btn)
+            self.ids.quiz_button_container.add_widget(btn)
             self.btns.append(btn)
 
     def select_quiz(self, option):
@@ -82,6 +90,7 @@ class AnswerButton(Button):
             if self.manager.scores:
                 quiz_name, score = self.manager.scores[-1]
                 self.ids.message_label.text = f"Quiz Completed!\n{quiz_name}\nYour Score: {score}"
+                self.ids.scores_label.text = "Previous Scores:\n"
                 for score in self.manager.scores:
                     # create a list of all scores in the format "Quiz Name: Score"
                     self.ids.scores_label.text += f"{score[0]}: {score[1]}\n"
@@ -99,6 +108,7 @@ class GenericQuizScreen(Screen):
     def on_pre_enter(self, *args):
         self.reset_timer()
         self.start_timer()
+        self.sorted_btns = None # This will be set in the specific quiz screen when buttons are populated.
 
     def on_leave(self, *args):
         self.stop_timer()
@@ -133,24 +143,7 @@ class GenericQuizScreen(Screen):
             if isinstance(child, AnswerButton):
                 buttons.append(child)
         return buttons
-    
-    def show_completion_message(self, dt):
-        score = self.calculate_score()
-        # Send the elapsed time to the completion message screen
-        self.manager.scores.append([self.quiz, score])
-        self.manager.current = "completion_message"
-    
-        
 
-
-
-
-class BasicNumbersScreen(GenericQuizScreen):
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.populate_random_numbers()
-        self.quiz = "Basic Numbers Quiz"
 
     def correct_answer(self, button):
         button.background_color = (0, 1, 0, 1)  # Green for 0.5 seconds, then fade out and disable
@@ -172,10 +165,27 @@ class BasicNumbersScreen(GenericQuizScreen):
         self.elapsed_time += 5  # Add 5 seconds penalty
         button.background_color = (1, 0, 0, 1)  # red for 0.5 seconds, then reset to normal
         Clock.schedule_once(lambda dt: button.reset_color(), 0.5)
+        
+
+    
+    def show_completion_message(self, dt):
+        score = self.calculate_score()
+        # Send the elapsed time to the completion message screen
+        self.manager.scores.append([self.quiz, score])
+        self.manager.current = "completion_message"
+    
+        
 
 
-        
-        
+
+
+class BasicNumbersScreen(GenericQuizScreen):
+
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
+        self.populate_random_numbers()
+        self.quiz = "Basic Numbers Quiz"
+
 
     def populate_random_numbers(self):
         # Pick three unique values so buttons are always different.
@@ -186,9 +196,23 @@ class BasicNumbersScreen(GenericQuizScreen):
         self.sorted_btns = sorted(self.btns, key=lambda b: b.text)
         self.sorted_btns[0].correct = True  # Mark the smallest number as correct
 
-        
 
-    pass
+class BasicAlphabetScreen(GenericQuizScreen):
+
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
+        self.populate_random_letters()
+        self.quiz = "Basic Alphabet Quiz"
+
+    def populate_random_letters(self):
+        self.btns = self.get_answer_btns()
+        letters = random.sample("ABCDEFGHIJKLMNOPQRSTUVWXYZ", len(self.btns))
+        for i in range(len(self.btns)):
+            self.btns[i].text = letters[i]
+        self.sorted_btns = sorted(self.btns, key=lambda b: b.text)
+        self.sorted_btns[0].correct = True  # Mark the alphabetically first letter as correct
+
+
 
 
 

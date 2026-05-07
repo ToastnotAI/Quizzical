@@ -8,7 +8,8 @@
 <QuizSelectButton>:
     text: "Quiz Option"
     font_size: 24
-    size_hint: (0.8, 0.15)
+    size_hint: (0.8, None)
+    height: 56
     pos_hint: {"center_x": 0.5}
 
 <CompletionMessage>:
@@ -60,6 +61,8 @@
         name: "quiz_select"
     BasicNumbersScreen:
         name: "basic_numbers"
+    BasicAlphabetScreen:
+        name: "basic_alphabet"
     CompletionMessage:
         name: "completion_message"
 
@@ -106,6 +109,17 @@
             text: "Select Quiz"
             font_size: 32
             color: 0.2, 0.5, 0.2, 1
+            size_hint_y: None
+            height: 56
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.width, self.height
+
+        BoxLayout:
+            id: quiz_button_container
+            orientation: 'vertical'
+            spacing: 12
+            size_hint_y: 1
 
 <GenericQuizScreen>:
     canvas.before:
@@ -136,6 +150,32 @@
 
         Label:
             text: "Basic Numbers Quiz"
+            font_size: 32
+            color: 0.1, 0.2, 0.5, 1
+
+        AnswerButton:
+            id: answer_btn_1
+
+        AnswerButton:
+            id: answer_btn_2
+
+        AnswerButton:
+            id: answer_btn_3
+
+        AnswerButton:
+            id: answer_btn_4
+
+        AnswerButton:
+            id: answer_btn_5
+
+<BasicAlphabetScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 56, 20, 20]
+        spacing: 20
+
+        Label:
+            text: "Basic Alphabet Quiz"
             font_size: 32
             color: 0.1, 0.2, 0.5, 1
 
