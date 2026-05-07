@@ -5,6 +5,54 @@
     size_hint: (0.8, 0.15)
     pos_hint: {"center_x": 0.5}
 
+<QuizSelectButton>:
+    text: "Quiz Option"
+    font_size: 24
+    size_hint: (0.8, 0.15)
+    pos_hint: {"center_x": 0.5}
+
+<CompletionMessage>:
+    canvas.before:
+        Color:
+            rgba: 0.9, 0.9, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            id: message_label
+            text: "Quiz Completed!\nNo score available."
+            font_size: 32
+            color: 0.2, 0.2, 0.5, 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.width, None
+
+        Label:
+            text: "All Quiz Scores"
+            font_size: 24
+            color: 0.2, 0.2, 0.5, 1
+
+        Label:
+            id: scores_label
+            text: ""
+            font_size: 20
+            color: 0.2, 0.2, 0.5, 1
+            halign: 'center'
+            valign: 'top'
+            text_size: self.width, None
+
+        Button:
+            text: "Back to Quiz Select"
+            size_hint: 0.5, 0.2
+            pos_hint: {"center_x": 0.5}
+            on_release: app.root.current = "quiz_select"
+
 <RootManager>:
     StartScreen:
         name: "start"
@@ -12,6 +60,8 @@
         name: "quiz_select"
     BasicNumbersScreen:
         name: "basic_numbers"
+    CompletionMessage:
+        name: "completion_message"
 
 <StartScreen>:
     canvas.before:
@@ -56,13 +106,6 @@
             text: "Select Quiz"
             font_size: 32
             color: 0.2, 0.5, 0.2, 1
-
-        Button:
-            text: "Basic Numbers Quiz"
-            font_size: 24
-            size_hint: (0.8, 0.15)
-            pos_hint: {"center_x": 0.5}
-            on_release: app.root.current = "basic_numbers"
 
 <GenericQuizScreen>:
     canvas.before:

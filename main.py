@@ -13,9 +13,38 @@ class StartScreen(Screen):
 
     pass
 
-class QuizSelectScreen(Screen):
-
+class QuizSelectButton(Button):
+    disabled = BooleanProperty(False)
+    
     pass
+
+class QuizSelectScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.quiz_options = [
+            {"text": "Basic Numbers Quiz", "screen": "basic_numbers"},
+            # Add more quiz options here as needed
+        ]
+        self.btns = []
+        self.create_quiz_buttons()
+    
+    def create_quiz_buttons(self):
+        for option in self.quiz_options:
+            btn = QuizSelectButton(text=option["text"])
+            btn.bind(on_release=lambda btn, option=option: self.select_quiz(option))
+            self.add_widget(btn)
+            self.btns.append(btn)
+
+    def select_quiz(self, option):
+        for btn in self.btns:
+            if btn.text == option["text"]:
+                btn.disabled = True
+                btn.background_color = (0.5, 0.5, 0.5, 1)  # Gray out the button
+        
+        self.manager.current = option["screen"]
+
+    
+        
 
 
 class AnswerButton(Button):
@@ -46,8 +75,22 @@ class AnswerButton(Button):
         anim = kivy.animation.Animation(opacity=0, duration=0.5)
         anim.start(self)
 
+    class CompletionMessage(Screen):
+        
+        def on_pre_enter(self, *args):
+            # Get the latest score from the manager
+            if self.manager.scores:
+                quiz_name, score = self.manager.scores[-1]
+                self.ids.message_label.text = f"Quiz Completed!\n{quiz_name}\nYour Score: {score}"
+                for score in self.manager.scores:
+                    # create a list of all scores in the format "Quiz Name: Score"
+                    self.ids.scores_label.text += f"{score[0]}: {score[1]}\n"
+            else:
+                self.ids.message_label.text = "Quiz Completed!\nNo score available."
+
 
 class GenericQuizScreen(Screen):
+    quiz = StringProperty("")
     elapsed_time = NumericProperty(0)
     clock_text = StringProperty("0.00")
     _clock_event = None
@@ -79,12 +122,25 @@ class GenericQuizScreen(Screen):
         self.elapsed_time = 0
         self.clock_text = "0.00"
 
+    def calculate_score(self):
+        # Current Scoring: 100 points minus 1 point for every second elapsed, with a minimum score of 0
+        score = max(0, 100 - int(self.elapsed_time))
+        return score
+
     def get_answer_btns(self):
         buttons = []
         for child in self.walk():
             if isinstance(child, AnswerButton):
                 buttons.append(child)
         return buttons
+    
+    def show_completion_message(self, dt):
+        score = self.calculate_score()
+        # Send the elapsed time to the completion message screen
+        self.manager.scores.append([self.quiz, score])
+        self.manager.current = "completion_message"
+    
+        
 
 
 
@@ -94,6 +150,7 @@ class BasicNumbersScreen(GenericQuizScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.populate_random_numbers()
+        self.quiz = "Basic Numbers Quiz"
 
     def correct_answer(self, button):
         button.background_color = (0, 1, 0, 1)  # Green for 0.5 seconds, then fade out and disable
@@ -134,7 +191,13 @@ class BasicNumbersScreen(GenericQuizScreen):
     pass
 
 
+
+
 class RootManager(ScreenManager):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.scores = []
 
     pass
 
