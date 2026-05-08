@@ -63,8 +63,14 @@
         name: "basic_numbers"
     BasicAlphabetScreen:
         name: "basic_alphabet"
+    AdvancedMathsScreen:
+        name: "advanced_maths"
+    AdvancedMemoryScreen:
+        name: "advanced_memory"
     CompletionMessage:
         name: "completion_message"
+    FinalScreen:
+        name: "final_screen"
 
 <StartScreen>:
     canvas.before:
@@ -149,7 +155,7 @@
         spacing: 20
 
         Label:
-            text: "Basic Numbers Quiz"
+            text: "Sort the Numbers From Smallest to Largest"
             font_size: 32
             color: 0.1, 0.2, 0.5, 1
 
@@ -175,7 +181,7 @@
         spacing: 20
 
         Label:
-            text: "Basic Alphabet Quiz"
+            text: "Sort the Letters From A to Z"
             font_size: 32
             color: 0.1, 0.2, 0.5, 1
 
@@ -194,4 +200,146 @@
         AnswerButton:
             id: answer_btn_5
 
-            
+<AdvancedMathsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 56, 20, 20]
+        spacing: 20
+
+        Label:
+            text: "Sort the Equations From Smallest to Largest"
+            font_size: 32
+            color: 0.1, 0.2, 0.5, 1
+
+        AnswerButton:
+            id: answer_btn_1
+
+        AnswerButton:
+            id: answer_btn_2
+
+        AnswerButton:
+            id: answer_btn_3
+
+        AnswerButton:
+            id: answer_btn_4
+
+        AnswerButton:
+            id: answer_btn_5
+
+
+<AdvancedMemoryScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 56, 20, 20]
+        spacing: 20
+
+        Label:
+            text: "Press the buttons in the order they appeared"
+            font_size: 32
+            color: 0.1, 0.2, 0.5, 1
+
+        Label:
+            id: message_label
+            text: "Press Start Sequence to begin"
+            font_size: 20
+            color: 0.1, 0.2, 0.5, 1
+            size_hint_y: None
+            height: 32
+
+        GridLayout:
+            cols: 3
+            spacing: 10
+            size_hint_y: 0.8
+
+            AnswerButton:
+                id: answer_btn_1
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_2
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_3
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_4
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_5
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_6
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_7
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_8
+                size_hint: (1, 1)
+            AnswerButton:
+                id: answer_btn_9
+                size_hint: (1, 1)
+
+        BoxLayout:
+            size_hint_y: None
+            height: 56
+            spacing: 12
+
+            Button:
+                text: "Start Sequence"
+                on_release: root.start_sequence()
+
+            Button:
+                text: "Review Sequence"
+                on_release: root.refresh_sequence()
+
+
+<FinalScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.92, 0.96, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            id: message_label
+            text: "All quizzes completed!"
+            font_size: 32
+            color: 0.2, 0.2, 0.5, 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.width, None
+
+        Label:
+            text: "Score Summary"
+            font_size: 24
+            color: 0.2, 0.2, 0.5, 1
+
+        Label:
+            id: scores_label
+            text: ""
+            font_size: 20
+            color: 0.2, 0.2, 0.5, 1
+            halign: 'center'
+            valign: 'top'
+            text_size: self.width, None
+
+        Label:
+            id: total_score_label
+            text: "Total Score: 0"
+            font_size: 26
+            color: 0.1, 0.3, 0.6, 1
+
+        BoxLayout:
+            size_hint_y: None
+            height: 56
+            spacing: 12
+
+            Button:
+                text: "Restart"
+                on_release: app.root.current = "start"
