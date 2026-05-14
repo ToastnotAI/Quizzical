@@ -172,7 +172,7 @@ class GenericQuizScreen(Screen):
 
     def calculate_score(self):
         # Current Scoring: 100 points minus 1 point for every second elapsed, with a minimum score of 0
-        self.elapsed_time = round(self.elapsed_time-10) # Subtract 10 seconds to allow for a perfect score
+        self.elapsed_time = round(self.elapsed_time-6) # Subtract 6 seconds to allow for a perfect score
         #make max score 100 and minimum score 0
         score = max(0, min(100, int(100 - self.elapsed_time)))
         return score
@@ -183,6 +183,14 @@ class GenericQuizScreen(Screen):
             if isinstance(child, AnswerButton):
                 buttons.append(child)
         return buttons
+
+    def reset_answer_buttons(self):
+        for button in self.get_answer_btns():
+            Animation.cancel_all(button, "opacity")
+            button.opacity = 1
+            button.disabled = False
+            button.correct = False
+            button.background_color = (1, 1, 1, 1)
 
 
     def correct_answer(self, button):
@@ -223,6 +231,7 @@ class BasicNumbersScreen(GenericQuizScreen):
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
+        self.reset_answer_buttons()
         self.populate_random_numbers()
         self.quiz = "Basic Numbers Quiz"
 
@@ -241,6 +250,7 @@ class BasicAlphabetScreen(GenericQuizScreen):
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
+        self.reset_answer_buttons()
         self.populate_random_letters()
         self.quiz = "Basic Alphabet Quiz"
 
@@ -255,6 +265,7 @@ class BasicAlphabetScreen(GenericQuizScreen):
 class AdvancedMathsScreen(GenericQuizScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
+        self.reset_answer_buttons()
         self.populate_random_equations()
         self.quiz = "Advanced Maths Quiz"
 
@@ -291,6 +302,11 @@ class AdvancedMathsScreen(GenericQuizScreen):
 
 
 class AdvancedMemoryScreen(GenericQuizScreen):
+    def set_start_button_disabled(self, disabled):
+        start_btn = self.ids.get("start_sequence_btn")
+        if start_btn:
+            start_btn.disabled = disabled
+
     def on_pre_enter(self, *args):
         # Default behaviour is overwritten to allow for showing the buttons
         self.sorted_btns = None # This will be set in the specific quiz screen when buttons are populated.
@@ -304,7 +320,10 @@ class AdvancedMemoryScreen(GenericQuizScreen):
             Animation.cancel_all(btn, "opacity")
             btn.opacity = 0
             btn.disabled = False
+            #change colour to default
+            btn.background_color = (1, 1, 1, 1)
 
+        self.set_start_button_disabled(False)
         self.set_status_text("Press Start Sequence to begin")
 
     def cancel_sequence_events(self):
@@ -339,6 +358,7 @@ class AdvancedMemoryScreen(GenericQuizScreen):
     def start_sequence(self):
         self.cancel_sequence_events()
         self.is_showing_sequence = True
+        self.set_start_button_disabled(True)
         for btn in self.btns:
             Animation.cancel_all(btn, "opacity")
             btn.correct = False
@@ -374,6 +394,8 @@ class AdvancedMemoryScreen(GenericQuizScreen):
             btn.opacity = 0
             btn.disabled = True
         # Show a message to the user to prepare for the sequence, then start the sequence after a short delay
+        # Also disable the start sequence button to prevent multiple clicks
+        self.set_start_button_disabled(True)
         self.set_status_text("Get Ready!")
         Clock.schedule_once(lambda dt: self.show_sequence(0), 2)
 
@@ -382,6 +404,7 @@ class AdvancedMemoryScreen(GenericQuizScreen):
         self.stop_timer()
         self.update_timer(10)  # Add 10 seconds penalty for refreshing the sequence
         self.is_showing_sequence = False
+        self.set_start_button_disabled(False)
         for btn in self.btns:
             Animation.cancel_all(btn, "opacity")
             btn.correct = False
@@ -407,6 +430,7 @@ class AdvancedMemoryScreen(GenericQuizScreen):
             btn.opacity = 0
             btn.disabled = False
         self.sorted_btns[0].correct = True
+        self.set_start_button_disabled(False)
         self.set_status_text("Press Start Sequence to begin")
 
     def on_leave(self, *args):
@@ -432,6 +456,7 @@ class FinalScreen(Screen):
 
             total_score = sum(score for _, score in self.manager.scores)
             self.ids.total_score_label.text = f"Total Score: {total_score}"
+
 
 
 
